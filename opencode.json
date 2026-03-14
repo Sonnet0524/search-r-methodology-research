@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "research-agent": {
+      "description": "Research Agent - 研究方法论Agent",
+      "mode": "primary",
+      "prompt": "{file:./agents/research/AGENTS.md}",
+      "skills": [
+        "literature-review",
+        "observation",
+        "quality-gate",
+        "theory-building",
+        "web-search"
+      ]
+    }
+  }
+}
