@@ -128,8 +128,17 @@ IF 确定性=MEDIUM OR 可接受性=MEDIUM:
 
 ## Related Tools
 
-- **baidu-scholar-search** - 验证文献来源 ✅
-- **document-output** - 输出评估报告 🚧 建设中
+### baidu-scholar-search ✅
+- **功能**：搜索中英文学术文献，验证引用来源
+- **参数**：keyword（关键词）、page_number（页码）、include_abstract（是否返回摘要）
+- **触发**：当需要验证文献来源、核实引用准确性时
+- **示例**：`baidu_scholar_search.sh "论文标题" 0 false`
+
+### document-output 🚧 建设中
+- **功能**：生成格式化的评估报告
+- **支持类型**：report（评估报告）、analysis（分析报告）
+- **状态**：脚本待实现
+- **替代方案**：直接使用Markdown格式输出评估报告
 
 ## References
 

@@ -118,9 +118,25 @@ User: "基于观察形成研究假设"
 
 ## Related Tools
 
-- **file-reading** - 读取观察数据 🚧 建设中
-- **paddleocr-async** - OCR处理大文件 ✅
-- **document-output** - 输出观察报告 🚧 建设中
+### file-reading 🚧 建设中
+- **功能**：读取和解析各类文件（PDF、Word、Excel、Markdown）
+- **支持格式**：.pdf, .docx, .xlsx, .md, .txt, .csv
+- **状态**：脚本待实现
+- **替代方案**：使用paddleocr-async处理PDF和图像文件
+
+### paddleocr-async ✅
+- **功能**：PaddleOCR异步API，支持文本识别和文档解析
+- **支持模型**：PP-OCRv5（文本识别）、PaddleOCR-VL-1.5（文档解析）
+- **参数**：file-url/file-path（文件路径）、model（模型选择）
+- **触发**：当需要处理PDF、图像、大文件时
+- **示例**：`paddleocr_async.py --file-path "./doc.pdf" --model PaddleOCR-VL-1.5`
+- **特点**：支持大文件（PDF最多1000页），异步处理不阻塞
+
+### document-output 🚧 建设中
+- **功能**：生成格式化文档输出
+- **支持格式**：Markdown, HTML, JSON
+- **文档类型**：report（报告）、note（笔记）、summary（摘要）、analysis（分析）
+- **状态**：脚本待实现
 
 ## References
 

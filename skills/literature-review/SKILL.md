@@ -104,10 +104,28 @@ User: "建立这个领域的知识图谱"
 
 ## Related Tools
 
-- **baidu-scholar-search** - 学术文献检索（推荐） ✅
-- **baidu-search** - 网络信息搜索 ✅
-- **baidu-baike-data** - 概念定义查询 ✅
-- **file-reading** - 解析文献文件 🚧 建设中
+### baidu-scholar-search ✅ （推荐）
+- **功能**：搜索中英文学术文献（期刊、会议、论文等）
+- **参数**：keyword（关键词）、page_number（页码）、include_abstract（是否返回摘要）
+- **触发**：当需要检索学术论文、期刊文章、会议论文时
+- **示例**：`baidu_scholar_search.sh "machine learning" 0 true`
+
+### baidu-search ✅
+- **功能**：百度AI搜索，获取实时网络信息
+- **参数**：query（搜索词）、count（结果数量）、freshness（时间范围）
+- **触发**：当需要搜索技术文档、博客文章、新闻资讯时
+- **示例**：`search.py '{"query":"人工智能最新进展","count":10}'`
+
+### baidu-baike-data ✅
+- **功能**：查询百度百科词条，获取权威概念解释
+- **参数**：search_type（lemmaTitle/lemmaList/lemmaId）、search_key（词条名或ID）
+- **触发**：当需要查询概念定义、名词解释时
+- **示例**：`baidu_baike.py --search_type=lemmaTitle --search_key="机器学习"`
+
+### file-reading 🚧 建设中
+- **功能**：读取和解析各类文件（PDF、Word、Excel、Markdown）
+- **状态**：脚本待实现
+- **替代方案**：使用paddleocr-async处理PDF文件
 
 ## References
 
