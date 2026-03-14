@@ -896,3 +896,215 @@ SEARCH-R/
 **记录时间**: 2026-03-14  
 **会话类型**: 框架完善 + 文档创建 + 工具测试  
 **会话状态**: ✅ 已完成
+
+---
+
+## [2026-03-14] OpenCode全局Tools迁移与集成
+
+### 会话主题
+将SEARCH-R仓库中的底层工具迁移到OpenCode全局tools目录，实现开箱即用的中文研究和文档处理能力。
+
+### 主要工作
+
+#### 1. 仓库Tools分析
+
+**分析目标**：
+- 检查哪些工具可以复制到OpenCode全局tools
+- 验证工具是否满足OpenCode全局tools标准
+
+**OpenCode全局Tools标准**：
+- 文件格式：TypeScript 或 JavaScript
+- 放置位置：`~/.config/opencode/tools/`
+- 定义方式：使用 `tool()` helper，包含 `description`、`args`、`execute`
+- 可调用脚本：可通过 `Bun.$` 调用任何语言的脚本
+
+**当前仓库Tools格式**：
+- 文件格式：Python 脚本 + SKILL.md 说明文件
+- 输入方式：命令行参数
+- 输出方式：JSON → stdout
+- 环境变量：✅ 使用
+
+**结论**：可以迁移，但需要创建 TypeScript wrapper
+
+#### 2. 迁移方案设计
+
+**方案 B：TypeScript Wrapper**
+
+目录结构：
+```
+~/.config/opencode/tools/
+├── scripts/                    # Python 脚本目录
+│   ├── baidu-search/
+│   │   └── search.py
+│   ├── baidu-scholar/
+│   │   └── search.py
+│   ├── baidu-baike/
+│   │   └── baike.py
+│   └── paddleocr-ocr/
+│       ├── ocr_caller.py
+│       └── lib.py
+├── baidu-search.ts             # TypeScript wrapper
+├── baidu-scholar.ts
+├── baidu-baike.ts
+└── paddleocr.ts
+```
+
+#### 3. 工具实现
+
+**创建的文件**：
+
+| 文件 | 类型 | 描述 |
+|------|------|------|
+| `baidu-search.ts` | TypeScript | 百度搜索 wrapper |
+| `baidu-scholar.ts` | TypeScript | 百度学术 wrapper |
+| `baidu-baike.ts` | TypeScript | 百度百科 wrapper |
+| `paddleocr.ts` | TypeScript | PaddleOCR wrapper |
+| `.env` | 配置 | API 密钥配置 |
+| `AGENTS.md` | 文档 | 全局工具使用指南 |
+
+**复制的 Python 脚本**：
+- `scripts/baidu-search/search.py`
+- `scripts/baidu-scholar/search.py`
+- `scripts/baidu-baike/baike.py`
+- `scripts/paddleocr-ocr/ocr_caller.py`
+- `scripts/paddleocr-ocr/lib.py`
+
+#### 4. 环境变量配置
+
+**配置文件**: `~/.config/opencode/.env`
+```
+BAIDU_API_KEY=bce-v3/ALTAK-...
+PADDLEOCR_ACCESS_TOKEN=de89a11f...
+PADDLEOCR_OCR_API_URL=https://k358e0c7fbo05ck2.aistudio-app.com/ocr
+PADDLEOCR_DOC_PARSING_API_URL=https://c7l9bckah9wdgey8.aistudio-app.com/layout-parsing
+```
+
+**环境变量加载机制**：
+- TypeScript wrapper 中实现 `loadEnv()` 函数
+- 从 `.env` 文件读取环境变量
+- 在执行 Python 脚本时传递环境变量
+
+#### 5. API测试结果
+
+| 工具 | 测试状态 | 测试结果 |
+|------|:--------:|----------|
+| baidu-search | ✅ 通过 | 搜索 OpenCode AI 成功 |
+| baidu-scholar | ✅ 通过 | 搜索深度学习论文成功 |
+| baidu-baike | ✅ 通过 | 查询人工智能词条成功 |
+| paddleocr | ✅ 通过 | 识别图片文字成功 |
+
+#### 6. 全局AGENTS.md创建
+
+**创建目的**：让 OpenCode 自动知道何时使用这些工具
+
+**内容包含**：
+- 各工具的使用场景
+- 工具选择指南
+- 语言偏好建议
+
+**测试验证**：
+| 用户请求 | 自动选择的工具 |
+|---------|---------------|
+| "搜索 OpenCode 最新消息" | ✅ baidu-search |
+| "找学术论文" | ✅ baidu-scholar |
+| "什么是 Transformer 模型" | ✅ baidu-baike |
+
+### 会话统计
+
+- **会话时长**：约1.5小时
+- **创建文件**：6个
+- **复制文件**：5个
+- **API测试**：4次（全部通过）
+- **功能验证**：3次（自动选择工具成功）
+
+### 完成的产出
+
+**OpenCode全局Tools**：
+```
+~/.config/opencode/
+├── .env                    # API 密钥配置
+├── AGENTS.md               # 全局工具使用指南
+├── opencode.json           # OpenCode 配置
+└── tools/
+    ├── baidu-search.ts     # 百度搜索
+    ├── baidu-scholar.ts    # 百度学术
+    ├── baidu-baike.ts      # 百度百科
+    ├── paddleocr.ts        # OCR 工具
+    └── scripts/            # Python 脚本
+```
+
+**功能特性**：
+- ✅ 自动加载环境变量
+- ✅ 错误处理完善
+- ✅ 工具描述清晰
+- ✅ 参数类型安全
+
+### 技术要点
+
+#### 1. TypeScript Wrapper 模式
+
+```typescript
+import { tool } from "@opencode-ai/plugin"
+import path from "path"
+import { existsSync, readFileSync } from "fs"
+
+function loadEnv(): Record<string, string> {
+  // 从 .env 文件加载环境变量
+}
+
+export default tool({
+  description: "工具描述",
+  args: {
+    // 参数定义
+  },
+  async execute(args, context) {
+    // 调用 Python 脚本
+    const result = await Bun.$`ENV_VAR=${value} python3 ${script} ${args}`.quiet()
+    return result.stdout.toString()
+  },
+})
+```
+
+#### 2. 环境变量传递
+
+在 Bun shell 命令中直接传递环境变量：
+```typescript
+await Bun.$`BAIDU_API_KEY=${env.BAIDU_API_KEY} python3 ${script} '${params}'`.quiet()
+```
+
+#### 3. 全局规则配置
+
+通过 `~/.config/opencode/AGENTS.md` 让 LLM 了解工具使用场景。
+
+### 待办事项
+
+**短期**：
+- [ ] 将敏感信息（API Key）移出 .env 文件
+- [ ] 添加更多错误处理
+- [ ] 支持更多参数选项
+
+**中期**：
+- [ ] 添加 file-reading 工具
+- [ ] 添加 document-output 工具
+- [ ] 完善 AGENTS.md 内容
+
+**长期**：
+- [ ] 考虑 MCP Server 方案
+- [ ] 添加工具使用统计
+- [ ] 建立工具测试框架
+
+### 质量门控评估
+
+**当前评估**：
+- 确定性：HIGH - 工具实现清晰，测试全部通过
+- 可接受性：HIGH - 功能完整，符合用户需求
+- 认知混淆：NONE - 对OpenCode工具机制理解准确
+
+**结论**：迁移工作完成，所有工具可用
+
+---
+
+**记录者**: Research Agent  
+**记录时间**: 2026-03-14  
+**会话类型**: 工具迁移 + 全局集成 + API测试  
+**会话状态**: ✅ 已完成
