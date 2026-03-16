@@ -1,7 +1,7 @@
 ---
 description: Research Agent - 使用SEARCH-R方法论进行系统性研究
 mode: primary
-version: 1.1
+version: 2.0
 skills:
   - literature-review
   - observation
@@ -44,20 +44,61 @@ skills:
 
 ---
 
-## 📚 多课题管理
+## 📚 课题管理
 
-### 研究课题初始化
+### 目录结构原则
 
-**重要**：Research Agent支持多个研究课题管理。
+**核心原则**：
+- `agents/` 只放Agent定义（AGENTS.md, skills/, init.md）
+- `research/` 放所有研究内容（topic, observations, theory等）
 
-**初始化流程**：
+### 两种模式
+
+**单课题模式**：
+```
+research/
+├── registry.md           # 课题注册表
+├── current-topic.md      # 当前课题引用
+├── topic.md              # 课题定义
+├── catch-up.md           # 追更文档
+├── session-log.md        # 会话日志
+├── observations/         # 观察笔记
+├── retrievals/           # 检索报告
+├── theory/               # 理论文档
+└── reflections/          # 反思笔记
+```
+
+**多课题模式**：
+```
+research/
+├── registry.md           # 课题注册表（所有课题概览）
+├── current-topic.md      # 当前激活课题引用
+└── topics/
+    ├── topic-1/          # 课题1（完整文档体系）
+    │   ├── topic.md
+    │   ├── catch-up.md
+    │   ├── session-log.md
+    │   ├── observations/
+    │   ├── theory/
+    │   └── ...
+    └── topic-2/          # 课题2
+        └── ...
+```
+
+### 初始化流程
+
 1. 阅读 [init.md](init.md) 了解课题管理机制
-2. 创建研究课题配置（`research-topics/[topic-name].md`）
-3. 激活研究课题（更新 `current-topic.md`）
-4. 开始研究循环
+2. 创建研究课题配置
+   - 单课题：`research/topic.md`
+   - 多课题：`research/topics/[topic-name]/topic.md`
+3. 更新课题注册表 `research/registry.md`
+4. 激活研究课题（更新 `research/current-topic.md`）
+5. 开始研究循环
 
-**当前研究课题**：
-- 查看 `current-topic.md` 了解当前激活的课题
+### 当前研究课题
+
+- 查看 `research/registry.md` 了解所有课题概览
+- 查看 `research/current-topic.md` 了解当前激活的课题
 - 或询问："当前研究课题是什么？"
 
 ---
@@ -114,17 +155,12 @@ R - Reflect（反思迭代）：持续优化方法
 - 检索报告（retrievals/）
 - 理论文档（theory/）
 - 反思笔记（reflections/）
-
-**使用模板**：参考 `templates/` 目录
-
-### 3. 文档化能力（不可分离）
-
-**标准产出**：
-- 观察笔记（observations/）
-- 检索报告（retrievals/）
-- 理论文档（theory/）
-- 反思笔记（reflections/）
 - 会话日志（session-log.md）
+- 追更文档（catch-up.md）
+
+**位置**：
+- 单课题：直接在 `research/` 目录下
+- 多课题：在 `research/topics/[topic-name]/` 目录下
 
 **使用模板**：参考 `templates/` 目录
 
@@ -223,18 +259,21 @@ from read_docx import read_docx, read_docx_as_markdown
 ### 启动流程
 
 ```
-1. 读取当前研究课题
-   - 查看 current-topic.md
-   - 读取 research-topics/[topic-name].md
-   - 了解研究背景和目标
+1. 读取课题注册表
+   - 查看 research/registry.md
+   - 了解所有课题概览和状态
 
-2. 确认研究状态
-   - 检查当前进展
-   - 确认下一步行动
-   - 准备开始研究
+2. 确认当前课题
+   - 查看 research/current-topic.md
+   - 确定课题路径
 
-3. 开始研究循环
-   - 根据状态继续研究
+3. 读取课题内容
+   - 单课题：research/topic.md
+   - 多课题：research/topics/[topic-name]/topic.md
+   - 读取 catch-up.md 快速恢复上下文
+
+4. 开始研究循环
+   - 根据课题状态继续研究
    - 或开始新的SEARCH-R循环
 ```
 
@@ -250,22 +289,25 @@ from read_docx import read_docx, read_docx_as_markdown
    - 决定是否需要Human介入
 
 3. 记录研究过程
-   - 更新研究课题进展
-   - 记录会话日志
+   - 更新课题进展（topic.md）
+   - 记录会话日志（session-log.md）
+   - 更新课题注册表（registry.md）
 ```
 
 ### 会话结束
 
 ```
-1. 更新研究进展
-   - 更新 research-topics/[topic-name].md
-   - 记录当前进展和下一步
+1. 更新课题进展
+   - 更新 topic.md（记录当前进展和下一步）
+   - 更新 session-log.md（记录关键决策和产出）
 
-2. 记录会话日志
-   - 更新 session-log.md
-   - 记录关键决策和产出
+2. 生成追更文档
+   - 更新 catch-up.md（便于下次快速恢复）
 
-3. 简单反思
+3. 更新课题注册表
+   - 更新 research/registry.md 中的进度概览
+
+4. 简单反思
    - 反思本次会话
    - 识别改进点
 ```
@@ -355,30 +397,89 @@ python3 tools/git-management/scripts/git_safe.py push --branch main
 
 ## 📁 文件结构
 
+### SEARCH-R 框架模板
+
 ```
 SEARCH-R/
-├── agents/research/
-│   ├── AGENTS.md              # 本文件：Agent核心定义
-│   ├── init.md                # 研究课题初始化指南
-│   ├── ESSENTIALS.md          # 核心要点速查
-│   └── skills/                # 技能库
+├── agents/research/              # Agent定义层
+│   ├── AGENTS.md                 # 本文件：Agent核心定义
+│   ├── init.md                   # 研究课题初始化指南
+│   ├── ESSENTIALS.md             # 核心要点速查
+│   └── skills/                   # 技能库
 │
-├── methodology/               # 方法论体系
-│   ├── search-r-cycle.md      # SEARCH-R循环详解
-│   ├── research-depth.md      # 研究深度定义
-│   └── human-role.md          # Human角色定义
+├── research/                     # 研究内容层
+│   ├── registry.md               # 课题注册表模板
+│   ├── current-topic.md          # 当前课题引用模板
+│   └── templates/                # 课题模板
+│       ├── topic-template.md
+│       └── registry-template.md
 │
-├── templates/                 # 文档模板
+├── methodology/                  # 方法论体系
+│   ├── search-r-cycle.md         # SEARCH-R循环详解
+│   ├── research-depth.md         # 研究深度定义
+│   └── human-role.md             # Human角色定义
+│
+├── templates/                    # 文档模板
 │   ├── observation-template.md
 │   ├── retrieval-template.md
 │   ├── theory-template.md
 │   └── reflection-template.md
 │
-├── tools/                     # 工具集
-│   └── init-research.sh       # 项目初始化脚本
+└── tools/                        # 工具集
+    └── init-research.sh          # 项目初始化脚本
+```
+
+### 单课题研究项目实例
+
+```
+my-research/
+├── agents/research/              # Agent定义（从SEARCH-R复制）
+│   └── ...
 │
-└── research-instances/        # 研究实例注册表
-    └── README.md
+├── research/                     # 研究内容
+│   ├── registry.md               # 课题注册表
+│   ├── current-topic.md          # 当前课题引用
+│   ├── topic.md                  # 课题定义
+│   ├── catch-up.md               # 追更文档
+│   ├── session-log.md            # 会话日志
+│   ├── observations/             # 观察笔记
+│   ├── retrievals/               # 检索报告
+│   ├── theory/                   # 理论文档
+│   ├── reflections/              # 反思笔记
+│   └── references/               # 参考资料
+│
+├── methodology/                  # 方法论
+├── templates/                    # 文档模板
+└── opencode.json                 # 项目配置
+```
+
+### 多课题研究项目实例
+
+```
+my-research/
+├── agents/research/              # Agent定义
+│   └── ...
+│
+├── research/                     # 研究内容
+│   ├── registry.md               # 课题注册表
+│   ├── current-topic.md          # 当前激活课题
+│   │
+│   └── topics/                   # 课题目录
+│       ├── agent-memory/         # 课题1
+│       │   ├── topic.md
+│       │   ├── catch-up.md
+│       │   ├── session-log.md
+│       │   ├── observations/
+│       │   ├── theory/
+│       │   └── ...
+│       │
+│       └── agent-metacognition/  # 课题2
+│           ├── topic.md
+│           └── ...
+│
+├── methodology/
+├── templates/
+└── opencode.json
 ```
 
 ## 🔗 关键文档索引
@@ -508,6 +609,13 @@ SEARCH-R/
 
 ## 📝 版本历史
 
+- **v2.0** (2026-03-16) - 目录结构重构
+  - 明确agents/只放Agent定义
+  - 明确research/放所有研究内容
+  - 支持单课题和多课题两种模式
+  - 新增课题注册表（registry.md）机制
+  - 每个课题拥有完整的文档体系
+
 - **v1.3** (2026-03-14) - Git安全管理集成
   - 新增git-management技能
   - 强制执行Git安全管理流程
@@ -532,6 +640,6 @@ SEARCH-R/
 ---
 
 **维护者**: SEARCH-R Framework  
-**更新时间**: 2026-03-14  
+**更新时间**: 2026-03-16  
 **文档类型**: Agent核心定义  
 **Token目标**: ~5k tokens

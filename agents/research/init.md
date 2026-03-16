@@ -2,7 +2,7 @@
 
 > 如何使用SEARCH-R方法论创建和管理研究课题
 
-**版本**: v2.0 | **更新**: 2026-03-13
+**版本**: v3.0 | **更新**: 2026-03-16
 
 ---
 
@@ -11,29 +11,97 @@
 ### 架构定位
 
 ```
-SEARCH-R (方法论模板仓库)
-├─ 提供方法论体系
-├─ 提供文档模板
-├─ 提供Agent设计规范
-└─ 提供工具和技能库
-    ↓ 作为模板
-    ↓ 复制使用
+SEARCH-R (方法论框架)
+├─ agents/research/         # Agent定义（只读）
+│   ├─ AGENTS.md            # Agent核心定义
+│   ├─ init.md              # 本文件
+│   └─ skills/              # 技能库
+│
+└─ research/                # 研究内容（实例化时创建）
+    ├─ registry.md          # 课题注册表
+    ├─ current-topic.md     # 当前课题引用
+    └─ topics/ 或 topic.md  # 课题定义
+    
+    ↓ 作为模板复制
+    ↓ 实例化
 研究项目 (具体研究仓库)
-├─ 使用SEARCH-R方法论
-├─ 管理多个研究课题
-└─ 产出具体研究成果
+├─ agents/research/         # Agent定义
+└─ research/                # 研究内容
 ```
 
-### 两种使用场景
+### 核心原则
+
+1. **职责分离**：agents/ 只放Agent定义，research/ 只放研究内容
+2. **课题独立**：每个课题拥有完整的文档体系
+3. **统一入口**：通过registry.md管理所有课题概览
+
+---
+
+## 📁 目录结构
+
+### 单课题模式
+
+适用于只有一个研究主题的项目：
 
 ```
-场景A: 创建新的研究项目
-"我想研究 [课题描述]"
-→ 创建新项目 → 复制SEARCH-R模板 → 创建第一个课题 → 开始研究
+my-research/
+├── agents/research/
+│   ├── AGENTS.md
+│   ├── init.md
+│   ├── ESSENTIALS.md
+│   └── skills/
+│
+├── research/
+│   ├── registry.md           # 课题注册表（只有一个课题）
+│   ├── current-topic.md      # 引用当前课题
+│   │
+│   ├── topic.md              # 课题定义
+│   ├── catch-up.md           # 追更文档
+│   ├── session-log.md        # 会话日志
+│   │
+│   ├── observations/         # 观察笔记
+│   ├── retrievals/           # 检索报告
+│   ├── theory/               # 理论文档
+│   ├── reflections/          # 反思笔记
+│   └── references/           # 参考资料
+│
+├── methodology/
+├── templates/
+└── opencode.json
+```
 
-场景B: 在现有项目中添加课题
-"我想在当前项目中研究 [新课题]"
-→ 创建新课题配置 → 激活课题 → 开始研究
+### 多课题模式
+
+适用于有多个相关研究主题的项目：
+
+```
+my-research/
+├── agents/research/
+│   └── ...
+│
+├── research/
+│   ├── registry.md           # 课题注册表（所有课题概览）
+│   ├── current-topic.md      # 当前激活课题引用
+│   │
+│   └── topics/
+│       ├── agent-memory/     # 课题1：完整文档体系
+│       │   ├── topic.md
+│       │   ├── catch-up.md
+│       │   ├── session-log.md
+│       │   ├── observations/
+│       │   ├── retrievals/
+│       │   ├── theory/
+│       │   ├── reflections/
+│       │   └── references/
+│       │
+│       └── agent-metacognition/  # 课题2
+│           ├── topic.md
+│           ├── catch-up.md
+│           └── ...
+│
+├── methodology/
+├── templates/
+└── opencode.json
 ```
 
 ---
@@ -54,13 +122,17 @@ SEARCH-R (方法论模板仓库)
    示例: agent-memory-system-research
    
 2. **项目路径** (项目创建在哪里):
-   示例: /Users/sonnet/opencode/
+   示例: D:\opencode\github\
    或直接回车使用默认路径
 
-3. **研究背景** (简短描述，1-2句话即可):
+3. **研究模式**:
+   - single: 单课题模式（推荐）
+   - multi: 多课题模式
+
+4. **研究背景** (简短描述，1-2句话即可):
    为什么要研究这个课题？
    
-4. **核心问题** (最重要的问题，1-3个):
+5. **核心问题** (最重要的问题，1-3个):
    你想通过研究解决什么问题？
 
 💡 提示：先提供基本信息即可开始，后续可以逐步完善
@@ -69,9 +141,10 @@ SEARCH-R (方法论模板仓库)
 **用户**：
 ```
 1. agent-memory-research
-2. /Users/sonnet/opencode/
-3. Agent需要有效的记忆系统来支持长期对话和知识积累
-4. 记忆应该分为哪些类型？如何实现记忆的压缩和遗忘？
+2. D:\opencode\github\
+3. single
+4. Agent需要有效的记忆系统来支持长期对话和知识积累
+5. 记忆应该分为哪些类型？如何实现记忆的压缩和遗忘？
 ```
 
 **Research Agent**：
@@ -83,13 +156,15 @@ SEARCH-R (方法论模板仓库)
 1. 创建项目目录结构
 2. 复制SEARCH-R方法论模板
 3. 创建opencode.json配置
-4. 创建第一个研究课题配置
-5. 激活研究课题
+4. 创建研究课题配置
+5. 创建课题注册表
+6. 激活研究课题
 
 ✅ 项目创建完成！
 
-📁 项目位置: /Users/sonnet/opencode/agent-memory-research
-📄 课题配置: agents/research/research-topics/agent-memory-system.md
+📁 项目位置: D:\opencode\github\agent-memory-research
+📄 课题定义: research/topic.md
+📊 课题注册表: research/registry.md
 🎯 当前状态: 已激活
 
 📊 研究课题概览：
@@ -99,106 +174,6 @@ SEARCH-R (方法论模板仓库)
 - 下一步: 开始第一次调研
 
 是否现在开始研究？
-```
-
-### 自动化步骤
-
-Research Agent会自动完成：
-
-```bash
-# 1. 创建项目目录
-mkdir -p /Users/sonnet/opencode/agent-memory-research
-
-# 2. 复制SEARCH-R模板文件
-# - methodology/
-# - templates/
-# - agents/research/ (AGENTS.md, skills/)
-# - tools/
-
-# 3. 创建opencode.json配置
-cat > opencode.json << 'EOF'
-{
-  "$schema": "https://opencode.ai/config.json",
-  "agent": {
-    "research-agent": {
-      "description": "Research Agent - Agent记忆系统研究",
-      "mode": "primary",
-      "prompt": "{file:./agents/research/AGENTS.md}",
-      "skills": ["literature-review", "observation", "quality-gate", "theory-building"]
-    }
-  }
-}
-EOF
-
-# 4. 创建研究课题配置 (使用最小化模板)
-# 详见下一节
-
-# 5. 激活研究课题
-# 更新 current-topic.md
-```
-
----
-
-## 📝 研究课题配置模板
-
-### 最小化模板（推荐用于快速启动）
-
-```markdown
----
-topic: [课题名称]
-created: YYYY-MM-DD
-status: active
-priority: high
----
-
-# [课题名称]
-
-## 📋 研究背景
-
-[为什么要研究？背景是什么？]
-
-## 🎯 核心问题
-
-1. [问题1]
-2. [问题2]
-3. [问题3]
-
-## 📊 当前进展
-
-### 当前阶段
-- 阶段：Survey (观察调研)
-- 完成度：0%
-- 下一步：[下一步行动]
-
-### 已完成
-- [YYYY-MM-DD] 创建研究课题
-
-## 📝 研究记录
-
-### [YYYY-MM-DD] 创建课题
-- 研究内容：初始化研究课题
-- 下一步：开始Survey阶段
-```
-
-### 完整模板
-
-当研究逐步深入时，可以扩展为完整模板。详见：
-- [topic-template.md](research-topics/topic-template.md) - 包含所有字段
-- [课题配置详解](#课题配置字段说明)
-
-### 何时使用哪个模板？
-
-```
-启动阶段 → 最小化模板
-├─ 只填写核心信息
-├─ 快速开始研究
-└─ 后续逐步完善
-
-深入研究 → 完整模板
-├─ 补充研究范围
-├─ 添加研究计划
-├─ 记录风险管理
-└─ 设置里程碑
 ```
 
 ---
@@ -241,14 +216,36 @@ priority: high
 
 **Research Agent**：
 ```
-✅ 创建新研究课题...
+检测到当前项目是单课题模式，是否转换为多课题模式？
+- 转换后，原课题将移至 research/topics/agent-memory/
+- 新课题将创建在 research/topics/agent-metacognition/
 
-[创建课题配置文件]
-[更新项目课题列表]
+是否继续？(y/n)
+```
+
+**用户**：y
+
+**Research Agent**：
+```
+✅ 转换项目结构并创建新课题...
+
+[迁移原课题]
+- 移动 research/topic.md → research/topics/agent-memory/topic.md
+- 移动 research/observations/ → research/topics/agent-memory/observations/
+- ...
+
+[创建新课题]
+- 创建 research/topics/agent-metacognition/topic.md
+- 创建 research/topics/agent-metacognition/catch-up.md
+- ...
+
+[更新配置]
+- 更新 research/registry.md
+- 更新 research/current-topic.md
 
 ✅ 课题创建完成！
 
-📁 课题配置: research-topics/agent-metacognition.md
+📁 课题配置: research/topics/agent-metacognition/topic.md
 📊 当前状态: paused (优先级medium)
 🎯 当前课题: 仍为"Agent记忆系统设计"
 
@@ -262,52 +259,147 @@ priority: high
 
 ---
 
-## 📊 课题配置字段说明
+## 📝 核心文件说明
 
-### 必填字段（最小化模板）
+### registry.md（课题注册表）
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| `topic` | 课题名称 | Agent记忆系统设计 |
-| `created` | 创建日期 | 2026-03-13 |
-| `status` | 当前状态 | active/paused/completed |
-| `priority` | 优先级 | high/medium/low |
-| **研究背景** | 为什么研究 | Agent需要有效的记忆系统... |
-| **核心问题** | 1-3个关键问题 | 记忆如何分类？如何压缩？ |
+**作用**：管理所有课题的概览和状态
 
-### 可选字段（完整模板）
+**位置**：`research/registry.md`
 
-| 字段 | 何时添加 | 说明 |
-|------|----------|------|
-| **研究目标** | Survey阶段后 | 明确期望产出和成功标准 |
-| **研究范围** | 探索阶段时 | 定义包含和不包含的内容 |
-| **研究资料** | 检索过程中 | 记录相关文档和参考资料 |
-| **研究计划** | 规划阶段时 | 分阶段的任务和产出 |
-| **风险挑战** | 发现风险时 | 识别的风险和缓解措施 |
-| **里程碑** | 明确节点后 | 关键节点和时间点 |
+**模板**：
+```markdown
+---
+updated: YYYY-MM-DD
+total_topics: N
+active_topics: M
+---
 
-### 字段填充策略
+# 课题注册表
 
+## 📊 课题概览
+
+| 课题名称 | 状态 | 优先级 | 阶段 | 完成度 | 最后更新 |
+|---------|------|--------|------|--------|----------|
+| Agent记忆系统 | active | high | Survey | 30% | 2026-03-16 |
+| Agent元认知 | paused | medium | Explore | 10% | 2026-03-15 |
+
+## 📁 课题路径
+
+- **Agent记忆系统**: `topics/agent-memory/`
+- **Agent元认知**: `topics/agent-metacognition/`
+
+## 🎯 当前焦点
+
+**活跃课题**: Agent记忆系统
+
+**关键问题**:
+1. 记忆如何分类？
+2. 如何实现记忆压缩？
+
+**下一步**: 完成Survey阶段的资料收集
+
+---
+
+**维护者**: Research Agent
+**更新时间**: 2026-03-16
 ```
-创建时 → 必填字段
-├─ 快速启动
-└─ 基本方向明确
 
-Survey阶段 → 补充背景
-├─ 深化背景理解
-└─ 明确研究动机
+### current-topic.md（当前课题引用）
 
-Explore阶段 → 补充资料
-├─ 记录检索结果
-└─ 整理参考资料
+**作用**：指向当前激活的课题
 
-Analyze阶段 → 补充计划
-├─ 制定研究计划
-└─ 设置里程碑
+**位置**：`research/current-topic.md`
 
-持续更新 → 记录进展
-├─ 更新当前进展
-└─ 记录研究日志
+**单课题模式模板**：
+```markdown
+---
+topic: Agent记忆系统
+mode: single
+---
+
+# 当前研究课题
+
+**课题名称**: Agent记忆系统
+
+**模式**: 单课题模式
+
+**路径**: `topic.md`
+
+**状态**: active
+
+---
+
+**激活时间**: 2026-03-16
+```
+
+**多课题模式模板**：
+```markdown
+---
+topic: Agent记忆系统
+path: topics/agent-memory
+mode: multi
+---
+
+# 当前研究课题
+
+**课题名称**: Agent记忆系统
+
+**模式**: 多课题模式
+
+**路径**: `topics/agent-memory/`
+
+**状态**: active
+
+**快速链接**:
+- [课题定义](topics/agent-memory/topic.md)
+- [追更文档](topics/agent-memory/catch-up.md)
+- [会话日志](topics/agent-memory/session-log.md)
+
+---
+
+**激活时间**: 2026-03-16
+```
+
+### topic.md（课题定义）
+
+**作用**：定义研究课题的核心信息
+
+**位置**：
+- 单课题：`research/topic.md`
+- 多课题：`research/topics/[topic-name]/topic.md`
+
+**模板**：参考 `research/templates/topic-template.md`
+
+### catch-up.md（追更文档）
+
+**作用**：记录课题的最新进展，便于快速恢复上下文
+
+**位置**：
+- 单课题：`research/catch-up.md`
+- 多课题：`research/topics/[topic-name]/catch-up.md`
+
+**内容结构**：
+```markdown
+# Catch-Up 文档
+
+## 📍 当前位置
+- 阶段：Survey
+- 进度：30%
+
+## 🎯 核心问题
+1. 记忆如何分类？
+2. 如何实现记忆压缩？
+
+## 📝 最近进展
+- [2026-03-16] 分析了三种记忆类型...
+
+## ⏭️ 下一步
+1. 检索相关文献
+2. 构建记忆分类框架
+
+## 💾 关键上下文
+（保存重要的上下文信息，便于下次快速恢复）
 ```
 
 ---
@@ -317,9 +409,10 @@ Analyze阶段 → 补充计划
 ### 状态定义
 
 ```
-active   - 正在进行的研究
-paused   - 暂停的研究
+active    - 正在进行的研究
+paused    - 暂停的研究
 completed - 已完成的研究
+planned   - 计划中的研究
 ```
 
 ### 状态转换规则
@@ -329,9 +422,10 @@ completed - 已完成的研究
 paused → active (激活课题)
 active → paused (暂停课题)
 active → completed (完成课题)
+planned → active (启动计划课题)
 ```
 
-### 多课题管理
+### 多课题管理建议
 
 ```
 建议策略：
@@ -344,80 +438,46 @@ active → completed (完成课题)
 1. 保存当前课题进展
 2. 更新当前课题状态为paused
 3. 更新新课题状态为active
-4. 更新current-topic.md
-5. 读取新课题配置继续研究
+4. 更新 research/current-topic.md
+5. 读取新课题的 catch-up.md
+6. 继续研究
 ```
 
 ---
 
-## 🛠️ 自动化工具
+## 🔧 迁移指南
 
-### init-research.sh 脚本
-
-提供自动化创建工具（可选）：
-
-```bash
-# 使用脚本创建新项目
-./tools/init-research.sh \
-  --name "agent-memory-research" \
-  --path "/Users/sonnet/opencode/" \
-  --topic "Agent记忆系统设计"
-
-# 脚本会自动：
-# 1. 创建项目目录
-# 2. 复制SEARCH-R模板
-# 3. 创建配置文件
-# 4. 初始化课题
-```
-
-### Agent引导创建（推荐）
-
-更推荐使用对话式创建：
-- Agent会引导你填写信息
-- 可以随时调整和完善
-- 避免手动操作的错误
-
----
-
-## 📁 目录结构
-
-### SEARCH-R模板仓库
+### 从旧结构迁移
 
 ```
-SEARCH-R/
-├── methodology/           # 方法论体系
-├── templates/             # 文档模板
-├── agents/research/       # Agent设计
-│   ├── AGENTS.md          # Agent核心定义
-│   ├── init.md            # 本文件
-│   ├── skills/            # 技能库
-│   └── research-topics/
-│       └── topic-template.md
-└── tools/                 # 工具集
+旧结构 → 新结构
+
+agents/research/current-topic.md
+    → research/current-topic.md
+
+agents/research/research-topics/[topic].md
+    → research/topics/[topic]/topic.md
+
+agents/research/observations/
+    → research/topics/[topic]/observations/
+    或 research/observations/ (单课题)
+
+agents/research/session-log.md
+    → research/topics/[topic]/session-log.md
+    或 research/session-log.md (单课题)
 ```
 
-### 研究项目仓库
+### 迁移步骤
 
-```
-research-project/
-├── opencode.json          # 项目配置
-├── agents/research/
-│   ├── AGENTS.md          # Agent定义
-│   ├── init.md            # 初始化指南
-│   ├── current-topic.md   # 当前课题
-│   ├── session-log.md     # 会话日志
-│   ├── research-topics/   # 课题库
-│   │   ├── topic-1.md
-│   │   ├── topic-2.md
-│   │   └── ...
-│   ├── observations/      # 观察笔记
-│   ├── retrievals/        # 检索报告
-│   ├── theory/            # 理论文档
-│   └── reflections/       # 反思笔记
-├── methodology/           # 方法论
-├── templates/             # 文档模板
-└── docs/                  # 项目文档
-```
+1. 创建 `research/` 目录结构
+2. 创建 `research/registry.md`
+3. 迁移课题配置：
+   - 单课题：移动到 `research/topic.md`
+   - 多课题：移动到 `research/topics/[name]/topic.md`
+4. 迁移研究产出到对应课题目录
+5. 创建每个课题的 `catch-up.md`
+6. 更新 `research/current-topic.md`
+7. 清理 `agents/research/` 中的旧内容
 
 ---
 
@@ -438,16 +498,16 @@ research-project/
 
 ### 课题文档维护
 
-1. **及时更新进展** - 每次会话后更新
-2. **记录关键决策** - 在研究记录中留痕
-3. **整理研究资料** - 在研究资料中归档
-4. **同步状态变更** - 切换课题时更新状态
+1. **及时更新进展** - 每次会话后更新topic.md
+2. **维护catch-up** - 每次会话结束更新catch-up.md
+3. **同步注册表** - 切换课题时更新registry.md
+4. **记录关键决策** - 在session-log中留痕
 
 ---
 
 ## 📖 使用示例
 
-### 示例1：快速创建研究项目
+### 示例1：快速创建单课题研究项目
 
 ```
 Human: "我想研究代码自动生成的质量保证方法"
@@ -455,8 +515,9 @@ Human: "我想研究代码自动生成的质量保证方法"
 Agent: "好的！请提供：
 1. 项目名称: code-generation-qa-research
 2. 项目路径: [使用默认]
-3. 研究背景: 代码生成工具的输出质量参差不齐，需要系统化的质量保证方法
-4. 核心问题: 如何评估生成代码的质量？如何自动化质量检查？
+3. 研究模式: single
+4. 研究背景: 代码生成工具的输出质量参差不齐，需要系统化的质量保证方法
+5. 核心问题: 如何评估生成代码的质量？如何自动化质量检查？
 
 创建中... ✅ 完成！是否开始研究？"
 
@@ -465,30 +526,31 @@ Human: "开始研究"
 Agent: "进入Survey阶段..."
 ```
 
-### 示例2：在项目中添加课题
+### 示例2：转换为多课题模式
 
 ```
-Human: "我想研究代码生成的测试覆盖"
+Human: "我想在当前项目中研究代码生成的测试覆盖"
 
-Agent: "好的！当前项目有1个课题，我将创建新课题。
-课题名称: 代码生成测试覆盖研究
-研究背景: 测试覆盖是代码质量的重要指标
-核心问题: 如何为生成的代码自动创建测试？测试覆盖率达到多少合适？
-优先级: medium
+Agent: "当前项目是单课题模式，添加新课题需要转换为多课题模式。
+原课题将移至 topics/code-generation-qa/
+新课题将创建在 topics/test-coverage/
 
-创建中... ✅ 完成！是否切换到新课题？"
+是否继续？"
 
-Human: "先完成当前课题"
+Human: "y"
 
-Agent: "好的，新课题已创建但保持paused状态。
-当前课题: 代码生成质量保证 (active)
-可随时切换到: 代码生成测试覆盖 (paused)"
+Agent: "转换中... ✅ 完成！
+
+当前课题: code-generation-qa (active)
+新课题: test-coverage (paused)
+
+是否切换到新课题？"
 ```
 
 ### 示例3：切换研究课题
 
 ```
-Human: "切换到代码生成测试覆盖研究"
+Human: "切换到测试覆盖研究"
 
 Agent: "切换课题中...
 1. 保存当前课题进展
@@ -496,37 +558,14 @@ Agent: "切换课题中...
    - 下一步: 实现评估工具
    
 2. 激活新课题
-   - 课题: 代码生成测试覆盖研究
+   - 课题: 测试覆盖研究
    - 状态: active
-   - 当前进展: Survey阶段
+   - 读取: catch-up.md
    
-3. 更新current-topic.md
-
 ✅ 切换完成！
-当前课题: 代码生成测试覆盖研究
+当前课题: 测试覆盖研究
 下一步: 开始调研测试覆盖最佳实践"
 ```
-
----
-
-## 🔧 故障排除
-
-### 常见问题
-
-**Q: 课题配置文件太复杂，不知道怎么填？**
-A: 使用最小化模板，只填写核心信息即可开始。后续在研究过程中逐步完善。
-
-**Q: 可以同时研究多个课题吗？**
-A: 建议同时active的课题不超过2个，避免分散注意力。可以暂停低优先级课题。
-
-**Q: 如何判断课题是否完成？**
-A: 参考课题的"成功标准"和"期望产出"。当核心问题得到解答，期望产出已完成，即可标记为completed。
-
-**Q: 暂停的课题会遗忘吗？**
-A: 不会。课题配置会保留所有进展和下一步行动。建议每周回顾paused课题，适时恢复研究。
-
-**Q: 如何复用其他课题的成果？**
-A: 在课题配置的"相关课题"部分，可以引用其他课题的成果。详见topic-template.md。
 
 ---
 
@@ -534,28 +573,31 @@ A: 在课题配置的"相关课题"部分，可以引用其他课题的成果。
 
 ### 核心文档
 - [Agent身份和能力](AGENTS.md) - Research Agent核心定义
-- [课题模板](research-topics/topic-template.md) - 完整的课题配置模板
+- [核心要点速查](ESSENTIALS.md) - 快速参考
 
 ### 方法论文档
 - [SEARCH-R方法论](../../methodology/search-r-cycle.md) - 完整的7阶段研究循环
 - [研究深度定义](../../methodology/research-depth.md) - Level 0-3深度标准
 - [Human角色定义](../../methodology/human-role.md) - Human双重角色和参与最小化
 
-### 工具和资源
-- [项目初始化脚本](../../tools/init-research.sh) - 自动化创建工具
-- [快速开始指南](../../QUICKSTART.md) - 详细的使用教程
-- [研究实例](../../research-instances/README.md) - 使用SEARCH-R的研究案例
+### 模板文档
+- [课题模板](../../research/templates/topic-template.md)
+- [注册表模板](../../research/templates/registry-template.md)
 
 ---
 
 ## 📝 版本历史
 
-- **v2.0** (2026-03-13) - 重构优化
+- **v3.0** (2026-03-16) - 目录结构重构
+  - 明确agents/和research/职责分离
+  - 支持单课题和多课题两种模式
+  - 新增课题注册表机制
+  - 每个课题拥有完整文档体系
+
+- **v2.0** (2026-03-13) - 简化优化
   - 明确两种使用场景
   - 提供最小化模板
   - 强调对话式创建
-  - 简化流程和步骤
-  - 添加使用示例和故障排除
 
 - **v1.1** (2026-03-07) - 多课题管理支持
   - 分离研究主体和研究课题
@@ -566,5 +608,5 @@ A: 在课题配置的"相关课题"部分，可以引用其他课题的成果。
 ---
 
 **维护者**: SEARCH-R Framework  
-**更新时间**: 2026-03-13  
+**更新时间**: 2026-03-16  
 **文档类型**: 初始化指南
